@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stacked area</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+
+
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/kendo.dataviz.min.js"></script>
+    <script src="js/console.js"></script>
+	<script src="js/cagar_grafica.js"></script>
+	
+	
+</head>
+<body>
+     
+    
+         <div id="example" class="k-content">
+            <div class="chart-wrapper">
+                <div id="chart"></div>
+            </div>
+            
+
+        
+		
+		
+
+
+				 </div> 
+
+</body>
+</html>
+		<script>
+												
+												function createChart() {
+                    $("#chart").kendoChart({
+                       theme: $(document).data("kendoSkin") || "default",
+dataSource: {
+                            //type: "data",
+                              transport: {
+                        read: "json/codigojson.php"
+                    },
+                    schema: {
+                        data: "data"
+                    }
+                },
+                        title: {
+                            text: "Personas perdidas por colonia"
+                        },
+						legend: {
+                            visible: false
+                        },
+                        seriesDefaults: {
+                            type: "column"
+                        },
+                      series: [{
+ field: "estado",
+ name: "estado",
+ 
+ }],
+  seriesColors: ["#009bd7", "#d43851", "#dc5c71", "#e47f8f", "#eba1ad",
+                                       "#cd1533", "#26aadd", "#4db9e3", "#73c8e9", "#99d7ef"],
+                        valueAxis: {
+                            labels: {
+                              
+                            }
+                        },
+ categoryAxis: {
+ field: "colonia"
+ }
+ ,
+ tooltip: {
+                            format: "{0}%",
+							visible: true,
+                            template: "#= series.stack #s, age #= series.name #"
+							
+							
+                        }
+                    });
+                }
+
+                $(document).ready(function() {
+                    setTimeout(function() {
+                        // Initialize the chart with a delay to make sure
+                        // the initial animation is visible
+                        createChart();
+
+                        $("#example").bind("kendo:skinChange", function(e) {
+                            createChart();
+                        });
+                    }, 400);
+
+                    $(".configuration").bind("change", refresh);
+                });
+
+                function refresh() {
+                    var chart = $("#chart").data("kendoChart"),
+                        series = chart.options.series,
+                        categoryAxis = chart.options.categoryAxis,
+                        baseUnitInputs = $("input:radio[name=baseUnit]"),
+                        aggregateInputs = $("input:radio[name=aggregate]");
+
+                    for (var i = 0, length = series.length; i < length; i++) {
+                        series[i].aggregate = aggregateInputs.filter(":checked").val();
+                    };
+
+                    categoryAxis.baseUnit = baseUnitInputs.filter(":checked").val();
+
+                    chart.refresh();
+                }
+            </script>
